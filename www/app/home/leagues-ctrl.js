@@ -1,51 +1,45 @@
-/*
 (function() {
-	'use strict';
+  'use strict';
 
-	angular.module('eliteApp').controller('LeaguesCtrl', ['$state', 'eliteApi', LeaguesCtrl]);
+  angular
+    .module('eliteApp')
+    .controller('LeaguesCtrl', ['$state', 'eliteApi', '$scope', LeaguesCtrl]);
 
-	function LeaguesCtrl($state, eliteApi) {
-		var vm = this;
+  //LeaguesCtrl.$inject = ['$state', 'eliteApi', LeaguesCtrl];
 
-			//content
-		var leagues = eliteApi.getLeagues();
-		//var leagueData = eliteApi.getLeagueData();
-		
-		//console.log(leagues)
+  function LeaguesCtrl($state, eliteApi, $scope) {
+    var vm = this;
 
-		vm.leagues= leagues;
-	
+		eliteApi.getLeagues().then(function(data) {
+			vm.leagues = data.data;
+			console.log(data.data);
+		});
 
-	 };
-})();
-*/
+    vm.doRefresh = function() {
+      console.log('Refrescao');
+      // OjO on $q os necessary ().then
+      eliteApi.getLeagues().then(function(data) {
+        vm.leagues = data.data;
+        console.log(data.data);
+      }).finally(function() {
+        $scope.$broadcast('scroll.refreshComplete');
+      });
+    }
 
-(function() {
-	'use strict';
+    //var leagueData = eliteApi.getLeagueData();
 
-	angular
-	  .module('eliteApp')
-	  .controller('LeaguesCtrl', ['$state', 'eliteApi', LeaguesCtrl]);
+    //console.log(leagues)
 
-	//LeaguesCtrl.$inject = ['$state', 'eliteApi', LeaguesCtrl];
+    // vm.leagues= leagues;
 
-		function LeaguesCtrl($state, eliteApi) {
-		var vm = this;
+    vm.selectLeague = function(leagueID) {
+      eliteApi.setLeagueId(leagueID);
+      console.log('ID  ' + leagueID);
 
-			//content
-		var leagues = eliteApi.getLeagues();
-		//var leagueData = eliteApi.getLeagueData();
-		
-		//console.log(leagues)
+      $state.go("app.locations")
+    }
 
-		vm.leagues= leagues;
 
-		vm.selectLeague = function(leagueID){
-			//TODO: select correct league
-			$state.go("app.teams")
-		}
-	
+  };
 
-	 };
-	
 })();

@@ -11,7 +11,10 @@
 		//content
 		var vm=this;
 
-		//var data = eliteApi.getLeagueData();
+		eliteApi.getLeagueData().then(function(data) {
 		vm.teams = data.teams;
+		console.log('teams '+data.teams);
+
+		});
 	}
 })();

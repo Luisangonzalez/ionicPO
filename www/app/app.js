@@ -1,52 +1,70 @@
-angular.module('eliteApp', ['ionic'])
+angular.module('eliteApp', ['ionic','angular-cache','uiGmapgoogle-maps'])
 
 .run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-      // for form inputs)
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+    $ionicPlatform.ready(function() {
+      if (window.cordova && window.cordova.plugins.Keyboard) {
+        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+        // for form inputs)
+        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 
-      // Don't remove this line unless you know what you are doing. It stops the viewport
-      // from snapping when text inputs are focused. Ionic handles this internally for
-      // a much nicer keyboard experience.
-      cordova.plugins.Keyboard.disableScroll(true);
-    }
-    if(window.StatusBar) {
-      StatusBar.styleDefault();
-    }
-  });
-})
-.config(function($stateProvider, $urlRouterProvider) {
-	$stateProvider
-		.state('home', {
-			abstract: true,
-			url: '/home',
-			templateUrl: 'app/home/home.html'
-		})
-		.state('home.leagues',{
-			url: '/leagues',
-			views: {
-				'tab-leagues': {
-					templateUrl: 'app/home/leagues.html'
-				}
-			}
-		})
-		.state('home.myteams',{
-			url: '/myteams',
-			views: {
-				'tab-myteams': {
-					templateUrl: 'app/home/myteams.html'
-				}
-			}
-		})
-		.state('app', {
-			abstract:true,
-			url: '/app',
-			templateUrl: 'app/layout/menu-layout.html'
-		})
+        // Don't remove this line unless you know what you are doing. It stops the viewport
+        // from snapping when text inputs are focused. Ionic handles this internally for
+        // a much nicer keyboard experience.
+        cordova.plugins.Keyboard.disableScroll(true);
+      }
+      if (window.StatusBar) {
+        StatusBar.styleDefault();
+      }
 
-	.state('app.teams', {
+      // DSCacheFactory('leagueDataCache', {
+      //   storageMode: 'localStorage',
+      //   maxAge: 5000,
+      //   deleteOnExprie: 'aggressive'
+      // });
+      // DSCacheFactory('leaguesCache', {
+      //   storageMode: 'localStorage',
+      //   maxAge: 5000,
+      //   deleteOnExprie: 'aggressive'
+      // });
+      // DSCacheFactory('myTeamsCache', {
+      //   storageMode: 'localStorage'
+      // });
+      // DSCacheFactory('staticCache', {
+      //   storageMode: 'localStorage'
+      // });
+
+    });
+  })
+  .config(function($stateProvider, $urlRouterProvider) {
+    $stateProvider
+      .state('home', {
+        abstract: true,
+        url: '/home',
+        templateUrl: 'app/home/home.html'
+      })
+      .state('home.leagues', {
+        url: '/leagues',
+        views: {
+          'tab-leagues': {
+            templateUrl: 'app/home/leagues.html'
+          }
+        }
+      })
+      .state('home.myteams', {
+        url: '/myteams',
+        views: {
+          'tab-myteams': {
+            templateUrl: 'app/home/myteams.html'
+          }
+        }
+      })
+      .state('app', {
+        abstract: true,
+        url: '/app',
+        templateUrl: 'app/layout/menu-layout.html'
+      })
+
+    .state('app.teams', {
       url: "/teams",
       views: {
         "mainContent": {
@@ -107,7 +125,7 @@ angular.module('eliteApp', ['ionic'])
           templateUrl: "app/rules/rules.html",
         }
       }
-    });	
+    });
 
-		$urlRouterProvider.otherwise('/app/teams');
-});
+    $urlRouterProvider.otherwise('/app/teams');
+  });

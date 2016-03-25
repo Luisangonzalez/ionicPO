@@ -1,32 +1,112 @@
 (function() {
-	'use strict';
+  'use strict';
 
-	angular
-	  .module('eliteApp')
-	  .factory('eliteApi', eliteApi);
+  angular
+    .module('eliteApp')
+    .factory('eliteApi', ['$http', '$q', '$ionicLoading', '$cacheFactory', eliteApi]);
 
-	//NameFactory.$inject = ['dependencies'];
+  // eliteApi.$inject = ['$http', '$q', '$ionicLoading', 'DSCacheFactory', '$cacheFactory', '$scope'];
 
-//	function NameFactory(dependencies) {
-		//content
-//	}
-	function eliteApi() {
+  function eliteApi($http, $q, $ionicLoading, $cacheFactory) {
 
-		var leagues = JSON.parse('[{"id":1,"name":"7th Grade MS JV Friday 2013-14 League","isArchived":true,"href":"/api/leaguedata/1"},{"id":2,"name":"7th Grade MS JV Saturday 2013-14 League","isArchived":true,"href":"/api/leaguedata/2"},{"id":3,"name":"8th Grade MS Varsity Friday 2013-14 League","isArchived":true,"href":"/api/leaguedata/3"},{"id":1003,"name":"8th Grade MS Varsity Saturday 2013-14 League","isArchived":true,"href":"/api/leaguedata/1003"},{"id":1004,"name":"6th Grade Friday 2013-14 League","isArchived":true,"href":"/api/leaguedata/1004"},{"id":1005,"name":"5th Grade Saturday 2013-14 League","isArchived":true,"href":"/api/leaguedata/1005"},{"id":2005,"name":"March Madness Tournament 2014","isArchived":true,"href":"/api/leaguedata/2005"},{"id":2007,"name":"Friday Spring 6th Grade","isArchived":true,"href":"/api/leaguedata/2007"},{"id":2008,"name":"7th Grade HYBA Spring 2014","isArchived":true,"href":"/api/leaguedata/2008"},{"id":2009,"name":"Spring Fling Tournament 2014","isArchived":true,"href":"/api/leaguedata/2009"},{"id":2010,"name":"Metro Classic 2014","isArchived":true,"href":"/api/leaguedata/2010"},{"id":2011,"name":"Summer Showdown 2014","isArchived":false,"href":"/api/leaguedata/2011"},{"id":2012,"name":"8th Grade HYBA Fall 2014","isArchived":true,"href":"/api/leaguedata/2012"},{"id":2014,"name":"test","isArchived":false,"href":"/api/leaguedata/2014"},{"id":2015,"name":"Steve Test - Summer Showdown","isArchived":false,"href":"/api/leaguedata/2015"},{"id":2016,"name":"Bill Test Summer Showdown","isArchived":false,"href":"/api/leaguedata/2016"},{"id":2018,"name":"Steve-Bill Test","isArchived":false,"href":"/api/leaguedata/2018"},{"id":2019,"name":"Laker Challenge 2014","isArchived":false,"href":"/api/leaguedata/2019"},{"id":2020,"name":"HCYP 4th Grade Girls Rec 2014-2015","isArchived":false,"href":"/api/leaguedata/2020"},{"id":2023,"name":"Ballin in the Fall ","isArchived":false,"href":"/api/leaguedata/2023"},{"id":2024,"name":"7th Grade MS JV Friday 2014-15 League","isArchived":false,"href":"/api/leaguedata/2024"},{"id":2025,"name":"7th Grade MS JV Saturday 2014-15 League","isArchived":false,"href":"/api/leaguedata/2025"},{"id":2026,"name":"8th Grade MS Varsity Friday 2014-15 League","isArchived":false,"href":"/api/leaguedata/2026"},{"id":2027,"name":"8th Grade MS Varsity Saturday 2014-15 League","isArchived":false,"href":"/api/leaguedata/2027"},{"id":2028,"name":"7th-8th Grade HC Invitational 2014-15 League","isArchived":false,"href":"/api/leaguedata/2028"},{"id":2029,"name":"6th Grade Saturday 2014-15 League","isArchived":false,"href":"/api/leaguedata/2029"},{"id":2032,"name":"Ballin the Fall - Test","isArchived":false,"href":"/api/leaguedata/2032"},{"id":2034,"name":"March Madness 2015 Tournament","isArchived":false,"href":"/api/leaguedata/2034"},{"id":2035,"name":"8th Grade HYBA Spring 2015","isArchived":false,"href":"/api/leaguedata/2035"},{"id":2036,"name":"Friday Spring 2015 13U HCMS","isArchived":false,"href":"/api/leaguedata/2036"},{"id":2037,"name":"Friday Spring 2015 13U LEMS","isArchived":false,"href":"/api/leaguedata/2037"},{"id":2039,"name":"Spring Fling 2015 Tournament","isArchived":false,"href":"/api/leaguedata/2039"},{"id":2040,"name":"Metro Classic 2015 Tournament","isArchived":false,"href":"/api/leaguedata/2040"},{"id":3037,"name":"Summer Showdown 2015 Tournament","isArchived":false,"href":"/api/leaguedata/3037"},{"id":3039,"name":"Ballin in Fall 2015 - Ricky Knight Memorial Tournament","isArchived":false,"href":"/api/leaguedata/3039"},{"id":3040,"name":"March Madness 2016 Tournament","isArchived":false,"href":"/api/leaguedata/3040"},{"id":3041,"name":"March Madness Tournament 2016","isArchived":false,"href":"/api/leaguedata/3041"}]');
-		//content
+    var currentLeagueId;
 
-		function getLeagues(){
-			return leagues;
-		}
 
-		//function getLeagueData(){
-		//	return leagueData;
-	//	}
+    //Deprected NSCache, angualar-cache no oficial, oficial $cacheFactory
+    function getCache(cache) {
+      cache = $cacheFactory('cacheId');
+      cache.put("key", "value");
+      cache.put("another key", "another value");
+      console.log(cache.info());
+    }
 
-		return {
-			getLeagues: getLeagues
-			//getLeagueData: getLeagueData
-		};
-	}	
+    getCache();
+
+    // self.leaguesCache = DSCacheFactory.get('leaguesCache');
+    // self.leagueDataCache = DSCacheFactory.get('leagueDataCache');
+
+
+
+    function getLeagues() {
+      // Callbacks --> callback parameter
+      // $http({
+      //     method: 'GET',
+      //     url: 'http://elite-schedule.net/api/leaguedata'
+      //   })
+      //   .then(function successCallback(data, status, headers, config) {
+      //       callback(data);
+      //     },
+      //     function errorCallback(data, status, headers, config) {
+      //
+      //     });
+
+      // $q
+      var deferred = $q.defer(),
+        cacheKey = 'leagues',
+        leaguesData; // = self.leaguesCache.get(cacheKey)
+      $ionicLoading.show({
+        template: 'Loading...'
+      });
+      console.log('Leagues cache data' + leaguesData);
+      if (leaguesData) {
+        console.log('Found data insede cache ', leaguesData);
+        deferred.resolve(leaguesData);
+      } else {
+        $http({
+            method: 'GET',
+            url: 'http://elite-schedule.net/api/leaguedata'
+          })
+          .then(function successCallback(data, status, headers, config) {
+              /*
+               Is posible use $timeout if you want wait this explicit time
+               (inject $timeout before)
+               $timeout(function(){
+                  // todo
+                 },time ms);
+
+              */
+              deferred.resolve(data);
+              $ionicLoading.hide();
+            },
+            function errorCallback(data, status, headers, config) {
+              $ionicLoading.hide();
+              deferred.reject();
+            });
+        return deferred.promise;
+      }
+
+    }
+
+    function getLeagueData() {
+      var deferred = $q.defer();
+      $http({
+          method: 'GET',
+          url: 'http://elite-schedule.net/api/leaguedata/2'
+        })
+        .then(function successCallback(data, status, headers, config) {
+            console.log('Recived shedule data via HTTP on getLeagueData', data, status);
+            deferred.resolve(data);
+          },
+          function errorCallback(data, status, headers, config) {
+            console.log("Error while making HTTP call.");
+            console.log(data);
+            deferred.reject();
+          });
+      return deferred.promise;
+    }
+
+
+
+
+    function setLeagueId(leagueId) {
+      currentLeagueId = leagueId;
+    }
+
+    return {
+      getLeagues: getLeagues,
+      getLeagueData: getLeagueData,
+      setLeagueId: setLeagueId
+    };
+  }
 
 })();
